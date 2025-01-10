@@ -50,7 +50,7 @@ class FileUploaderApp:
         self.table_canvas.create_window((0, 0), window=self.table_inner_frame, anchor="nw")
         self.table_scrollbar.pack(side="right", fill="y")
         self.table_canvas.pack(side="left", fill="both", expand=True)
-        self.horizontal_scrollbar.pack(side="bottom", fill="x")
+        self.horizontal_scrollbar.pack(side="bottom", fill="x", expand=True)
         
         self.add_column_button = tk.Button(self.main_frame, text="Add Column", command=self.add_column)
         
@@ -161,7 +161,8 @@ class FileUploaderApp:
             self.adjust_window_width()
     
     def adjust_window_width(self):
-        table_width = sum(widget.winfo_reqwidth() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
+        self.root.update_idletasks()
+        table_width = sum(widget.winfo_width() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
         window_width = min(max(table_width, 800), 1000)
         self.root.geometry(f"{window_width}x{self.root.winfo_height()}")
         self.table_canvas.configure(width=window_width)
