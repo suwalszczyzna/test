@@ -35,29 +35,32 @@ class FileUploaderApp:
         self.load_csv_button = tk.Button(self.main_frame, text="Load CSV", command=self.load_csv)
         
         self.table_frame = tk.Frame(self.main_frame)
+        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10)  # Gridowanie głównej ramki tabeli
         
         self.table_canvas = tk.Canvas(self.table_frame)
         self.table_scrollbar = tk.Scrollbar(self.table_frame, orient="vertical", command=self.table_canvas.yview)
         self.table_canvas.configure(yscrollcommand=self.table_scrollbar.set)
         
-        self.horizontal_scrollbar = tk.Scrollbar(self.main_frame, orient="horizontal", command=self.table_canvas.xview)
-        self.table_canvas.configure(xscrollcommand=self.horizontal_scrollbar.set)
-        
         self.table_inner_frame = tk.Frame(self.table_canvas)
-        
         self.table_inner_frame.bind("<Configure>", lambda e: self.table_canvas.configure(scrollregion=self.table_canvas.bbox("all")))
-        
         self.table_canvas.create_window((0, 0), window=self.table_inner_frame, anchor="nw")
-        self.table_scrollbar.pack(side="right", fill="y")
-        self.table_canvas.pack(side="top", fill="both", expand=True)
         
-        self.horizontal_scroll_frame = tk.Frame(self.main_frame)
-        self.horizontal_scroll_frame.pack(fill="x", side="bottom")
-        self.horizontal_scrollbar.pack(in_=self.horizontal_scroll_frame, fill="x")
+        self.table_canvas.pack(side="left", fill="both", expand=True)
+        self.table_scrollbar.pack(side="right", fill="y")
+
+        # Utworzenie osobnej ramki dla poziomego scrollbara
+        self.h_scrollbar_frame = tk.Frame(root)
+        self.h_scrollbar_frame.pack(fill="x", padx=10)
+        self.horizontal_scrollbar = tk.Scrollbar(self.h_scrollbar_frame, orient="horizontal", command=self.table_canvas.xview)
+        self.table_canvas.configure(xscrollcommand=self.horizontal_scrollbar.set)
+        self.horizontal_scrollbar.pack(side="bottom", fill="x")
 
         self.add_column_button = tk.Button(self.main_frame, text="Add Column", command=self.add_column)
-        self.upload_button = tk.Button(self.main_frame, text="Upload to Server", command=self.upload_to_server)
+        self.add_column_button.grid(row=3, column=0, columnspan=3, pady=10)
         
+        self.upload_button = tk.Button(self.main_frame, text="Upload to Server", command=self.upload_to_server)
+        self.upload_button.grid(row=4, column=0, columnspan=3, pady=10)
+
         self.data = None
         self.entries = []
         self.mode = None
