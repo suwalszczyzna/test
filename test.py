@@ -50,7 +50,7 @@ class FileUploaderApp:
         self.table_canvas.create_window((0, 0), window=self.table_inner_frame, anchor="nw")
         self.table_scrollbar.pack(side="right", fill="y")
         self.table_canvas.pack(side="left", fill="both", expand=True)
-        self.horizontal_scrollbar.pack(side="bottom", fill="x", expand=True)
+        self.horizontal_scrollbar.pack(side="bottom", fill="x")  # Poprawione umieszczenie scrollbara
         
         self.add_column_button = tk.Button(self.main_frame, text="Add Column", command=self.add_column)
         
@@ -116,7 +116,7 @@ class FileUploaderApp:
             self.data = pd.DataFrame(columns=["File Path"])
             for file in os.listdir(folder_path):
                 file_path = os.path.join(folder_path, file)
-                if os.path.isfile(file_path):
+                if os.path.isfile(file_path)):
                     new_row = pd.DataFrame({"File Path": [file_path]})
                     self.data = pd.concat([self.data, new_row], ignore_index=True)
             self.display_data()
@@ -134,6 +134,13 @@ class FileUploaderApp:
     
     def display_data(self):
         if self.data is not None:
+            # Przechowanie bieżących danych wpisanych przez użytkownika
+            current_data = {col: [] for col in self.data.columns}
+            if self.entries:
+                for i in range(len(self.entries)):
+                    for j, col in enumerate(self.data.columns):
+                        current_data[col].append(self.entries[i][j].get())
+            
             for widget in self.table_inner_frame.winfo_children():
                 widget.destroy()
             
@@ -149,7 +156,7 @@ class FileUploaderApp:
                 row_entries = []
                 for j, value in enumerate(row):
                     entry = tk.Entry(self.table_inner_frame)
-                    entry.insert(0, str(value))
+                    entry.insert(0, str(value))  # Zamiana wartości na ciągi znaków
                     entry.grid(row=i+1, column=j, padx=5, pady=5)
                     row_entries.append(entry)
                 
@@ -157,12 +164,19 @@ class FileUploaderApp:
                 status_label.grid(row=i+1, column=len(self.data.columns), padx=5, pady=5)
                 row_entries.append(status_label)
                 self.entries.append(row_entries)
+            
+            # Przywrócenie bieżących danych wpisanych przez użytkownika
+            for col, values in current_data.items():
+                if col in self.data.columns:
+                    for i, value in enumerate(values):
+                        self.entries[i][self.data.columns.get_loc(col)].delete(0, tk.END)
+                        self.entries[i][self.data.columns.get_loc(col)].insert(0, str(value))
 
             self.adjust_window_width()
     
     def adjust_window_width(self):
         self.root.update_idletasks()
-        table_width = sum(widget.winfo_width() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
+        table_width = sum(widget.winfo_reqwidth() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
         window_width = min(max(table_width, 800), 1000)
         self.root.geometry(f"{window_width}x{self.root.winfo_height()}")
         self.table_canvas.configure(width=window_width)
