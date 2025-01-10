@@ -161,8 +161,8 @@ class FileUploaderApp:
             self.adjust_window_width()
     
     def adjust_window_width(self):
-        table_width = sum(widget.winfo_width() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
-        window_width = min(table_width, 1000)
+        table_width = sum(widget.winfo_reqwidth() for widget in self.table_inner_frame.winfo_children() if widget.winfo_manager() == 'grid')
+        window_width = min(max(table_width, 800), 1000)
         self.root.geometry(f"{window_width}x{self.root.winfo_height()}")
         self.table_canvas.configure(width=window_width)
     
