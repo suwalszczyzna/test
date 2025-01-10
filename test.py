@@ -13,8 +13,8 @@ class FileUploaderApp:
         self.config = self.load_config()
 
         self.start_frame = tk.Frame(root)
-        self.start_frame.pack(padx=10, pady=10)
-        
+        self.start_frame.grid(row=0, column=0, padx=10, pady=10)
+
         self.choice_label = tk.Label(self.start_frame, text="Choose data source:")
         self.choice_label.grid(row=0, column=0, columnspan=2, pady=10)
         
@@ -25,6 +25,7 @@ class FileUploaderApp:
         self.folder_button.grid(row=1, column=1, padx=5, pady=5)
         
         self.main_frame = tk.Frame(root)
+        self.main_frame.grid(row=1, column=0, padx=10, pady=10)
         
         self.file_path_entry = tk.Entry(self.main_frame, width=50)
         self.file_path_entry.grid(row=0, column=1, padx=10, pady=10)
@@ -35,8 +36,8 @@ class FileUploaderApp:
         self.load_csv_button = tk.Button(self.main_frame, text="Load CSV", command=self.load_csv)
         
         self.table_frame = tk.Frame(self.main_frame)
-        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10)  # Gridowanie głównej ramki tabeli
-        
+        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+
         self.table_canvas = tk.Canvas(self.table_frame)
         self.table_scrollbar = tk.Scrollbar(self.table_frame, orient="vertical", command=self.table_canvas.yview)
         self.table_canvas.configure(yscrollcommand=self.table_scrollbar.set)
@@ -45,28 +46,27 @@ class FileUploaderApp:
         self.table_inner_frame.bind("<Configure>", lambda e: self.table_canvas.configure(scrollregion=self.table_canvas.bbox("all")))
         self.table_canvas.create_window((0, 0), window=self.table_inner_frame, anchor="nw")
         
-        self.table_canvas.pack(side="left", fill="both", expand=True)
-        self.table_scrollbar.pack(side="right", fill="y")
+        self.table_canvas.grid(row=0, column=0, sticky="nsew")
+        self.table_scrollbar.grid(row=0, column=1, sticky="ns")
 
-        # Utworzenie osobnej ramki dla poziomego scrollbara
-        self.h_scrollbar_frame = tk.Frame(root)
-        self.h_scrollbar_frame.pack(fill="x", padx=10)
-        self.horizontal_scrollbar = tk.Scrollbar(self.h_scrollbar_frame, orient="horizontal", command=self.table_canvas.xview)
+        # Utworzenie poziomego scrollbara poniżej głównej ramki tabeli
+        self.horizontal_scrollbar = tk.Scrollbar(self.main_frame, orient="horizontal", command=self.table_canvas.xview)
         self.table_canvas.configure(xscrollcommand=self.horizontal_scrollbar.set)
-        self.horizontal_scrollbar.pack(side="bottom", fill="x")
+        self.horizontal_scrollbar.grid(row=3, column=0, columnspan=3, sticky="ew")
 
         self.add_column_button = tk.Button(self.main_frame, text="Add Column", command=self.add_column)
-        self.add_column_button.grid(row=3, column=0, columnspan=3, pady=10)
+        self.add_column_button.grid(row=4, column=0, columnspan=3, pady=10)
         
         self.upload_button = tk.Button(self.main_frame, text="Upload to Server", command=self.upload_to_server)
-        self.upload_button.grid(row=4, column=0, columnspan=3, pady=10)
+        self.upload_button.grid(row=5, column=0, columnspan=3, pady=10)
 
         self.data = None
         self.entries = []
         self.mode = None
 
-        self.add_column_button.pack()
-        self.upload_button.pack()
+        # Rozciąganie tabeli na dostępne miejsce
+        self.main_frame.rowconfigure(2, weight=1)
+        self.main_frame.columnconfigure(0, weight=1)
     
     def load_config(self):
         config = configparser.ConfigParser()
