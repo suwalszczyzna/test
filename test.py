@@ -67,7 +67,7 @@ class FileUploaderApp:
         # Rozciąganie tabeli na dostępne miejsce
         self.main_frame.rowconfigure(2, weight=1)
         self.main_frame.columnconfigure(0, weight=1)
-    
+
     def load_config(self):
         config = configparser.ConfigParser()
         config.read('rest_api.config')
@@ -79,21 +79,23 @@ class FileUploaderApp:
     
     def load_csv_ui(self):
         self.mode = "csv"
-        self.start_frame.pack_forget()
-        self.main_frame.pack(padx=10, pady=10)
+        self.start_frame.grid_forget()
+        self.main_frame.grid(row=0, column=0, padx=10, pady=10)
         self.load_csv_button.grid(row=1, column=0, columnspan=3, pady=10)
-        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10)
+        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.horizontal_scrollbar.grid(row=3, column=0, columnspan=3, sticky="ew")
         self.add_column_button.grid(row=4, column=0, columnspan=3, pady=10)
         self.upload_button.grid(row=5, column=0, columnspan=3, pady=10)
     
     def select_folder_ui(self):
         self.mode = "folder"
-        self.start_frame.pack_forget()
-        self.main_frame.pack(padx=10, pady=10)
+        self.start_frame.grid_forget()
+        self.main_frame.grid(row=0, column=0, padx=10, pady=10)
         self.browse_button.config(command=self.browse_folder)
         self.browse_button.grid(row=1, column=2, padx=10, pady=10)
         self.file_path_entry.grid(row=1, column=1, padx=10, pady=10)
-        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10)
+        self.table_frame.grid(row=2, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+        self.horizontal_scrollbar.grid(row=3, column=0, columnspan=3, sticky="ew")
         self.add_column_button.grid(row=4, column=0, columnspan=3, pady=10)
         self.upload_button.grid(row=5, column=0, columnspan=3, pady=10)
     
